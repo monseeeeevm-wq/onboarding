@@ -68,6 +68,34 @@ public class GlobalExceptionHandler {
                 List.of("Envía el cuerpo como application/json"));
     }
 
+    @ExceptionHandler(GestopagoAutenticacionException.class)
+    public ResponseEntity<ApiResponse<Void>> manejarGestopagoAutenticacion(GestopagoAutenticacionException ex) {
+        log.error("Fallo de autenticación con Gestopago: {}", ex.getMessage());
+        return construir(HttpStatus.BAD_GATEWAY, "Servicio de pagos no disponible",
+                List.of("No fue posible autenticar con el proveedor. Intenta más tarde"));
+    }
+
+    @ExceptionHandler(GestopagoTimeoutException.class)
+    public ResponseEntity<ApiResponse<Void>> manejarGestopagoTimeout(GestopagoTimeoutException ex) {
+        log.warn("Timeout con Gestopago: {}", ex.getMessage());
+        return construir(HttpStatus.GATEWAY_TIMEOUT, "El proveedor tardó demasiado en responder",
+                List.of("Intenta de nuevo en unos momentos"));
+    }
+
+    @ExceptionHandler(GestopagoComunicacionException.class)
+    public ResponseEntity<ApiResponse<Void>> manejarGestopagoComunicacion(GestopagoComunicacionException ex) {
+        log.error("Error de comunicación con Gestopago: {}", ex.getMessage());
+        return construir(HttpStatus.SERVICE_UNAVAILABLE, "Servicio de pagos no disponible",
+                List.of("No fue posible comunicarse con el proveedor. Intenta más tarde"));
+    }
+
+    @ExceptionHandler(GestopagoRespuestaException.class)
+    public ResponseEntity<ApiResponse<Void>> manejarGestopagoRespuesta(GestopagoRespuestaException ex) {
+        log.error("Respuesta no exitosa de Gestopago (código {}): {}", ex.getCodigoProveedor(), ex.getMessage());
+        return construir(HttpStatus.BAD_GATEWAY, "El proveedor devolvió una respuesta no exitosa",
+                List.of("Código del proveedor: " + ex.getCodigoProveedor()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> manejarInesperado(Exception ex) {
         log.error("Error inesperado", ex);
