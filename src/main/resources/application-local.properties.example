@@ -1,3 +1,6 @@
 spring.datasource.url=jdbc:postgresql://localhost:5432/onboarding_clientes
 spring.datasource.username=TU_USUARIO
 spring.datasource.password=TU_PASSWORD
+gestopago.id-distribuidor=TU_ID_DISTRIBUIDOR
+gestopago.codigo-dispositivo=TU_CODIGO_DISPOSITIVO
+gestopago.password=TU_PASSWORD
